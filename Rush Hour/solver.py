@@ -14,14 +14,21 @@ class Solver:
         return None, 0
 
     def _is_goal(self, state):
-        exit_r, exit_c = self.board_config.exit_pos
-        exit_r_exp, exit_c_exp = exit_r + 1, exit_c + 1
-        if 0 <= exit_r_exp < len(state) and 0 <= exit_c_exp < len(state[0]):
-            # Kiểm tra xem xe 1 có ở vị trí thoát không
-            if self.board_config.exit_orientation == 'H':
-                return state[exit_r_exp][exit_c_exp-1] == 1
-            else:
-                return state[exit_r_exp-1][exit_c_exp] == 1
+        """Kiểm tra xem xe 1 đã chạm vào ô thoát (-2) hay chưa."""
+        exit_r_exp, exit_c_exp = -1, -1
+        initial_grid = self.board_config.get_expanded_grid()
+        for r in range(len(initial_grid)):
+            for c in range(len(initial_grid[r])):
+                if initial_grid[r][c] == -2:
+                    exit_r_exp, exit_c_exp = r, c
+                    break
+            if exit_r_exp != -1:
+                break
+        
+        # Nếu tìm thấy ô thoát, kiểm tra xem nó có chứa xe 1 không.
+        if exit_r_exp != -1 and state[exit_r_exp][exit_c_exp] == 1:
+            return True
+            
         return False
 
     def _get_car_positions(self, state, car_id):
