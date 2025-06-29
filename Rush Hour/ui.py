@@ -21,8 +21,9 @@ class UI:
         try:
             # Giả sử các file ảnh nằm cùng thư mục với file script
             script_dir = os.path.dirname(os.path.abspath(__file__))
+            photos_dir = os.path.join(script_dir, 'Photos')  # Thêm dòng này để chỉ định thư mục ảnh
             def load_img(file_name, alpha=False):
-                path = os.path.join(script_dir, file_name)
+                path = os.path.join(photos_dir, file_name)
                 image = pygame.image.load(path)
                 return image.convert_alpha() if alpha else image.convert()
 
