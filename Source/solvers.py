@@ -288,6 +288,66 @@ def A_star_solver(game_map):
     else:
         print('No solution')
         return None, expanded_nodes, search_time, peak_memory
+
+def ucs_enhance(map):
+    start_time = time.time()
+    tracemalloc.start()  # Bắt đầu theo dõi bộ nhớ
+
+    # Initial step for A-star sover
+    initial_objects = rh.get_objects_info(map)
+    initial_state = rh.State(map, initial_objects)
+
+    expansion = set()  # Sử dụng set để lưu trạng thái đã mở rộng
+    frontier = [initial_state]  # Sử dụng danh sách để lưu trạng thái trong frontier
+    frontier_cost = dict()  # (key: current_state, value: cost)
+    frontier_cost[initial_state] = 0  # Chi phí ban đầu là 0
+
+    # find goal's position
+    goal_pos = (-1, -1)
+    for i in range(len(map)):
+        for j in range(len(map[0])):
+            if map[i][j] == -2:
+                goal_pos = (i, j)
+                break
+        
+        if goal_pos != (-1, -1):
+            break
+
+    solution_steps = []  # Danh sách để lưu các bước giải quyết
+    while frontier:
+        current_state = heapq.heappop(frontier)  # Lấy trạng thái có chi phí thấp nhất
+        expansion.add(current_state)  # Thêm trạng thái hiện tại vào tập đã mở rộng
+
+        # Check for goal
+        if current_state.is_goal(goal_pos):
+            temp_state = current_state
+            while temp_state:
+                solution_steps.insert(0, temp_state)  # Thêm trạng thái vào đầu danh sách
+                temp_state = temp_state.parent
+
+            break  # Thoát khỏi vòng lặp nếu tìm thấy đích
+
+        # Get children states
+        children_states = rh.generate_child_state(current_state)
+
+        for child_state in children_states:
+            if child_state in expansion:
+                continue
+
+            child_state.fn = child_state.gn
+            if child_state not in frontier_cost or child_state.fn < frontier_cost[child_state]:
+                # Nếu trạng thái con chưa tồn tại trong frontier, thêm vào
+                frontier_cost[child_state] = child_state.fn
+                heapq.heappush(frontier, child_state)
+
+    time_taken = time.time() - start_time
+    _, peak_memory = tracemalloc.get_traced_memory()  # Lấy thông tin bộ nhớ đã sử dụng
+    tracemalloc.stop()  # Dừng theo dõi bộ nhớ
+
+    if not solution_steps:
+        return None, len(expansion), time_taken, peak_memory  # Trả về None nếu không tìm thấy đường đi
+
+    return solution_steps, len(expansion), time_taken, peak_memory
     
 def print_map(map):
     for row in map:
