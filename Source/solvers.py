@@ -286,7 +286,6 @@ def A_star_solver(game_map):
     if solution_steps != []:
         return solution_steps, expanded_nodes, search_time, peak_memory
     else:
-        print('No solution')
         return None, expanded_nodes, search_time, peak_memory
 
 def ucs_enhance(map):
@@ -464,7 +463,6 @@ def bfs_solver(game_map):
     if solution_steps:
         return solution_steps, expanded_nodes, search_time, peak_memory
     else:
-        print('No solution found')
         return None, expanded_nodes, search_time, peak_memory
 
 def solve(game_map, algorithm='A*'):
@@ -476,29 +474,3 @@ def solve(game_map, algorithm='A*'):
         return dfs_solver(game_map)
     elif algorithm == 'BFS':
         return bfs_solver(game_map)
-    
-def print_map(map):
-    for row in map:
-        print(row)
-    
-if __name__ == '__main__':
-    example_map = [
-            [-1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, 0, 0, 0, 0, 4, 0, -1],
-            [-1, 0, 0, 0, 0, 4, 0, -1],
-            [-1, 1, 1, 0, 0, 4, 0, -2],
-            [-1, 0, 0, 0, 3, 0, 0, -1],
-            [-1, 0, 0, 0, 3, 2, 2, -1],
-            [-1, 0, 0, 0, 0, 0, 0, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1]
-        ]
-    
-    solution_path, expanded_nodes, search_time, memory_used = dfs_solver(example_map)
-    for state in solution_path:
-        print_map(state.game_map)
-        print()
-        
-    print(expanded_nodes)
-    print(f'{search_time:.4f} seconds')
-    print(f'{memory_used} bytes')
-    
