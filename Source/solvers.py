@@ -290,12 +290,12 @@ def A_star_solver(game_map):
         return None, expanded_nodes, search_time, peak_memory
 
 def ucs_enhance(map):
+    # Theo dõi thời gian tìm kiếm, bộ nhớ đã sử dụng
     start_time = time.time()
-    tracemalloc.start()  # Bắt đầu theo dõi bộ nhớ
+    tracemalloc.start()
 
-    # Initial step for A-star sover
-    initial_objects = rh.get_objects_info(map)
-    initial_state = rh.State(map, initial_objects)
+    initial_objects = get_objects_info(map)
+    initial_state = State(map, initial_objects)
 
     expansion = set()  # Sử dụng set để lưu trạng thái đã mở rộng
     frontier = [initial_state]  # Sử dụng danh sách để lưu trạng thái trong frontier
@@ -316,6 +316,7 @@ def ucs_enhance(map):
     solution_steps = []  # Danh sách để lưu các bước giải quyết
     while frontier:
         current_state = heapq.heappop(frontier)  # Lấy trạng thái có chi phí thấp nhất
+        frontier_cost.pop(current_state, None)  # Xóa trạng thái khỏi frontier_cost
         expansion.add(current_state)  # Thêm trạng thái hiện tại vào tập đã mở rộng
 
         # Check for goal
@@ -328,7 +329,7 @@ def ucs_enhance(map):
             break  # Thoát khỏi vòng lặp nếu tìm thấy đích
 
         # Get children states
-        children_states = rh.generate_child_state(current_state)
+        children_states = generate_child_state(current_state)
 
         for child_state in children_states:
             if child_state in expansion:
@@ -340,9 +341,10 @@ def ucs_enhance(map):
                 frontier_cost[child_state] = child_state.fn
                 heapq.heappush(frontier, child_state)
 
+    # Tính toán thời gian tìm kiếm và bộ nhớ đã sử dụng
     time_taken = time.time() - start_time
     _, peak_memory = tracemalloc.get_traced_memory()  # Lấy thông tin bộ nhớ đã sử dụng
-    tracemalloc.stop()  # Dừng theo dõi bộ nhớ
+    tracemalloc.stop()
 
     if not solution_steps:
         return None, len(expansion), time_taken, peak_memory  # Trả về None nếu không tìm thấy đường đi
