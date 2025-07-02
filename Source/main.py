@@ -109,10 +109,12 @@ class Game:
             gs.status = 'ready' # Reset trạng thái khi đổi map
         elif name == "algo_left":
             gs.algo_index = (gs.algo_index - 1) % len(gui.ALGORITHMS)
-            gs.status = 'ready' # Reset trạng thái khi đổi thuật toán
+            self.game_state = gui.GameState(self.all_maps[gs.map_index], map_index=gs.map_index, algo_index=gs.algo_index)
+            self.ui.state = self.game_state # Cập nhật state cho UI
         elif name == "algo_right":
             gs.algo_index = (gs.algo_index + 1) % len(gui.ALGORITHMS)
-            gs.status = 'ready' # Reset trạng thái khi đổi thuật toán
+            self.game_state = gui.GameState(self.all_maps[gs.map_index], map_index=gs.map_index, algo_index=gs.algo_index)
+            self.ui.state = self.game_state # Cập nhật state cho UI
         elif name == "Solve" and gs.status == 'ready':
             gs.status = 'solving'
             solve_thread = threading.Thread(target=gs.solve) # Chạy giải thuật trong một luồng riêng
