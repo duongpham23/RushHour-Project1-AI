@@ -66,7 +66,10 @@ class UI:
             self.images['bg_forest'] = pygame.transform.scale(forest_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
             self.images['bg_water'] = pygame.transform.scale(water_img, (MAP_SIZE * CELL_SIZE, MAP_SIZE * CELL_SIZE))
             self.images['gate'] = pygame.transform.scale(gate_img, (CELL_SIZE, CELL_SIZE))
-            self.images[1] = {"H": {2: pygame.transform.scale(boat_img, (CELL_SIZE * 2, CELL_SIZE))}}
+            self.images[1] = {
+                "H": {2: pygame.transform.scale(boat_img, (CELL_SIZE * 2, CELL_SIZE))},
+                "V": {2: pygame.transform.rotate(pygame.transform.scale(boat_img, (CELL_SIZE * 2, CELL_SIZE)), 90)}
+            }
             self.images['wood'] = {
                 "H": {l: pygame.transform.scale(wood_img, (CELL_SIZE * l, CELL_SIZE)) for l in [2, 3, 4]},
                 "V": {l: pygame.transform.rotate(pygame.transform.scale(wood_img, (CELL_SIZE * l, CELL_SIZE)), 90) for l in [2, 3]}
