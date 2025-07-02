@@ -1,4 +1,3 @@
-from collections import deque
 import heapq
 import time
 import tracemalloc
@@ -215,65 +214,6 @@ def generate_child_state(current_state):
                 frontier.append(State(new_game_map, new_objects, current_state.gn + cost, current_state))
                 
     return frontier
-
-def bfs_solver(game_map):
-    tracemalloc.start()
-    start_time = time.time()
-    expanded_nodes = 0
-    
-    # Find goal position 
-    goal_pos = (-1, -1)
-    for i in range(len(game_map)):
-        for j in range(len(game_map[0])):
-            if game_map[i][j] == -2:
-                goal_pos = (i, j)
-                break
-        if goal_pos != (-1, -1):
-            break
-    
-    initial_objects = get_objects_info(game_map)
-    initial_state = State(game_map, initial_objects)
-    
-    frontier = [initial_state]
-    expansion = set()
-    frontier_states = {initial_state}  
-    
-    solution_steps = []
-    
-    # BFS main loop 
-    while frontier:
-        # BFS: lấy phần tử đầu tiên (FIFO) 
-        current_state = frontier.pop(0)
-        frontier_states.discard(current_state)
-        expansion.add(current_state)
-        expanded_nodes += 1
-        
-        # Check for goal 
-        if current_state.is_goal(goal_pos):
-            temp_state = current_state
-            while temp_state:
-                solution_steps.insert(0, temp_state)
-                temp_state = temp_state.parent
-            break
-        
-        child_states = generate_child_state(current_state)
-        
-        for child_state in child_states:
-            # Chỉ thêm vào frontier nếu chưa được expand và chưa có trong frontier
-            if child_state not in expansion and child_state not in frontier_states:
-                frontier.append(child_state)
-                frontier_states.add(child_state)
-    
-    # Calculate search time và memory 
-    search_time = time.time() - start_time
-    _, peak_memory = tracemalloc.get_traced_memory()
-    tracemalloc.stop()
-
-    if solution_steps:
-        return solution_steps, expanded_nodes, search_time, peak_memory
-    else:
-        print('No solution found')
-        return None, expanded_nodes, search_time, peak_memory
     
 # A-star solver
 def A_star_solver(game_map):
@@ -410,6 +350,73 @@ def ucs_enhance(map):
         return None, len(expansion), time_taken, peak_memory  # Trả về None nếu không tìm thấy đường đi
 
     return solution_steps, len(expansion), time_taken, peak_memory
+
+def dfs_solver(game_map):
+    import time
+    import tracemalloc
+
+    # Bắt đầu đo thời gian và bộ nhớ
+    start_time = time.time()
+    tracemalloc.start()
+
+    # Tìm goal
+    goal_pos = (-1, -1)
+    for i in range(len(game_map)):
+        for j in range(len(game_map[0])):
+            if game_map[i][j] == -2:
+                goal_pos = (i, j)
+                break
+        if goal_pos != (-1, -1):
+            break
+
+    # Khởi tạo trạng thái ban đầu
+    initial_objects = get_objects_info(game_map)
+    initial_state = State(game_map, initial_objects)
+
+    frontier = [initial_state]  # Stack cho DFS
+    expansion = set()
+    solution_steps = []
+
+    while frontier:
+        current_state = frontier.pop()
+
+        # Goal test
+        if current_state.is_goal(goal_pos):
+            temp = current_state
+            while temp:
+                solution_steps.insert(0, temp)
+                temp = temp.parent
+            break
+
+        if current_state in expansion:
+            continue
+        expansion.add(current_state)
+
+        # Sinh các trạng thái con
+        children = generate_child_state(current_state)
+        for child in reversed(children):  # reversed để duyệt đúng thứ tự
+            if child not in expansion:
+                frontier.append(child)
+
+    # Đo thời gian và bộ nhớ
+    time_taken = time.time() - start_time
+    _, peak_memory = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+
+    if not solution_steps:
+        return None, len(expansion), time_taken, peak_memory
+
+    return solution_steps, len(expansion), time_taken, peak_memory
+
+def solve(game_map, algorithm='A*'):
+    if algorithm == 'A*':
+        return A_star_solver(game_map)
+    elif algorithm == 'UCS':
+        return ucs_enhance(game_map)
+    elif algorithm == 'DFS':
+        return dfs_solver(game_map)
+    elif algorithm == 'BFS':
+        return None, 0, 0, 0  # BFS not implemented in this example
     
 def print_map(map):
     for row in map:
@@ -427,7 +434,7 @@ if __name__ == '__main__':
             [-1, -1, -1, -1, -1, -1, -1, -1]
         ]
     
-    solution_path, expanded_nodes, search_time, memory_used = A_star_solver(example_map)
+    solution_path, expanded_nodes, search_time, memory_used = dfs_solver(example_map)
     for state in solution_path:
         print_map(state.game_map)
         print()
