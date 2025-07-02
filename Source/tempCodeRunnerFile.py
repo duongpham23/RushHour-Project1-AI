@@ -1,2 +1,0 @@
-h}'")
-        return None
