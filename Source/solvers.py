@@ -1,3 +1,4 @@
+from collections import deque
 import heapq
 import time
 import tracemalloc
