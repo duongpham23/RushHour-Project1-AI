@@ -8,7 +8,7 @@ import solvers
 import time
 import threading
 
-def load_all_maps_from_file(filename="PlaceHolder.txt"):
+def load_all_maps_from_file(filename="maps.txt"):
     """Tải tất cả các map từ một file JSON duy nhất."""
     script_dir = os.path.dirname(os.path.abspath(__file__))
     maps_file_path = os.path.join(script_dir, "Map", filename)
