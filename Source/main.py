@@ -3,7 +3,7 @@ import pygame
 import sys
 import os
 import json
-import gui  # Import module để truy cập GameState và các hằng số
+import gui
 import solvers
 import time
 import threading
