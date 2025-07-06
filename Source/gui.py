@@ -177,7 +177,7 @@ class UI:
             lines = [
                 f"Search Time: {info.search_time:.4f} s", f"Memory Used: {mem_text}",
                 f"States Explored: {info.num_expanded:,}", f"Solution Steps: {len(info.solution_path)-1}",
-                f"Current Step: {info.current_step} / {len(info.solution_path)-1}", f"Total cost: {info.solution_path[info.current_step].gn}"
+                f"Current Step: {info.current_step} / {len(info.solution_path)-1}", f"Total cost: {info.solution_path[info.current_step].gn} / {info.solution_path[-1].gn}"
             ]
         elif info.status == 'failed': lines = [f"{ALGORITHMS[info.algo_index]} failed to solve."]
         elif info.status == 'solving': lines = ["Solving... please wait"]
