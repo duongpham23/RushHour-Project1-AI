@@ -2,7 +2,7 @@ import pygame
 import os
 import time
 import psutil
-import solvers # Import module solvers của bạn
+import solvers
 
 # --- CẤU HÌNH TOÀN CỤC ---
 # Kích thước màn hình
