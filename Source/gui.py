@@ -2,7 +2,7 @@ import pygame
 import os
 import time
 import psutil
-import solvers
+import solvers # Import module solvers của bạn
 
 # --- CẤU HÌNH TOÀN CỤC ---
 # Kích thước màn hình
@@ -177,7 +177,7 @@ class UI:
             lines = [
                 f"Search Time: {info.search_time:.4f} s", f"Memory Used: {mem_text}",
                 f"States Explored: {info.num_expanded:,}", f"Solution Steps: {len(info.solution_path)-1}",
-                f"Current Step: {info.current_step} / {len(info.solution_path)-1}", f"Total cost: {info.solution_path[-1].gn}"
+                f"Current Step: {info.current_step} / {len(info.solution_path)-1}", f"Total cost: {info.solution_path[info.current_step].gn}"
             ]
         elif info.status == 'failed': lines = [f"{ALGORITHMS[info.algo_index]} failed to solve."]
         elif info.status == 'solving': lines = ["Solving... please wait"]
@@ -234,7 +234,6 @@ class GameState:
         self.search_time = 0
         self.peak_memory = 0
         self.num_expanded = 0
-        self.total_cost = 0
 
         self.board = type('Board', (), {'goal_position': self._find_goal_position(game_map)})()
         self.current_state = solvers.State(game_map, solvers.get_objects_info(game_map))
@@ -257,7 +256,6 @@ class GameState:
             self.search_time = search_time
             self.peak_memory = memory_used
             self.num_expanded = expanded_nodes
-            self.total_cost = self.solution_path[-1].gn
         else:
             self.solution_path = []
             self.status = 'failed'
